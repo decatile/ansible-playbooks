@@ -1,0 +1,26 @@
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority srcnat;
+{% for lan in network.routing.lans %}
+	oifname "{{ network.routing.wan_interface }}" ip saddr {{ lan.subnet }} masquerade
+{% endfor %}
+    }
+}
+
+table inet filter {
+    chain input {
+    	type filter hook input priority 0;
+	tcp dport 22 accept
+	{% for rule in network.allow %}
+	{{ rule }} accept
+	{% endfor %}
+    }
+
+    chain forward {
+        type filter hook forward priority 0;
+{% for lan in network.routing.lans %}
+	iifname "{{ lan.interface }}" oifname "{{ network.routing.wan_interface }}" accept
+	iifname "{{ network.routing.wan_interface }}" oifname "{{ lan.interface }}" ct state established,related accept
+{% endfor %}
+    }
+}

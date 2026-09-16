@@ -1,0 +1,5 @@
+- name: Configure networking
+  ansible.builtin.template:
+    src: networking.conf.j2
+    dest: /etc/network/interfaces
+  notify: Restart networking service

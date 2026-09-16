@@ -1,0 +1,76 @@
+- name: Install packages
+  community.general.apk:
+    name: nftables,nftables-openrc,podman,podman-compose,sudo,neovim,bash,bash-completion,iproute2-ss,iptables
+    state: latest
+    
+- name: Enable IPv4 forwarding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_file: /etc/sysctl.d/forward.conf
+    state: present
+    reload: true
+
+- name: Enable ports >=53
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_unprivileged_port_start
+    value: '53'
+    sysctl_file: /etc/sysctl.d/unpriveleged_port.conf
+    state: present
+    reload: true
+
+- name: Load fuse module
+  community.general.modprobe:
+    name: fuse
+    state: present
+    persistent: present
+
+- name: Load tun module
+  community.general.modprobe:
+    name: tun
+    state: present
+    persistent: present
+
+- name: Allow wheel group passwordless sudo
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/wheel
+    content: "%wheel ALL=(ALL) NOPASSWD: ALL\n"
+    mode: '0440'
+    validate: '/usr/sbin/visudo -cf %s'
+
+- name: Make mount shared
+  ansible.builtin.copy:
+    dest: /etc/local.d/mount-rshared.start
+    content: |
+      #!/bin/sh
+      mount --make-rshared /
+    mode: '0755'
+
+- name: Enable and start local
+  ansible.builtin.service:
+    name: local
+    state: started
+    enabled: true
+
+- name: Add /etc/subuid for services
+  ansible.builtin.lineinfile:
+    path: /etc/subuid
+    line: services:100000:65536
+    create: true
+
+- name: Add /etc/subgid for services
+  ansible.builtin.lineinfile:
+    path: /etc/subgid
+    line: services:100000:65536
+    create: true
+- name: Make cgroups mode unified explicitly
+  ansible.builtin.lineinfile:
+    path: /etc/rc.conf
+    regexp: '^#?rc_cgroup_mode="unified"'
+    line: rc_cgroup_mode="unified"
+
+- name: Enable and start cgroups
+  ansible.builtin.service:
+    name: cgroups
+    state: started
+    enabled: true

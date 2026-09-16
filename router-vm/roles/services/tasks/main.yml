@@ -1,0 +1,21 @@
+- name: Create services user
+  ansible.builtin.user:
+    name: services
+    shell: /bin/bash
+    groups:
+      - wheel
+    append: true
+    create_home: true
+
+- name: Create SSH directory
+  ansible.builtin.file:
+    path: /home/services/.ssh
+    state: directory
+    owner: services
+    group: services
+    mode: '0700'
+
+- name: Configure services SSH key
+  ansible.posix.authorized_key:
+    user: services
+    key: "{{ ssh_public_key }}"

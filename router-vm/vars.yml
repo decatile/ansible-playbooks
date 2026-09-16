@@ -1,0 +1,14 @@
+ssh_public_key: SSH_KEY
+network:
+  interfaces:
+    - name: eth0
+      addresses: [192.168.10.4/24]
+      gateway: 192.168.10.2
+    - name: eth1
+      addresses: [192.168.11.2/24]
+  routing:
+    wan_interface: eth0
+    lans:
+      - interface: eth1
+        subnet: 192.168.11.0/24
+  allow: []
