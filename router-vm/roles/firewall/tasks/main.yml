@@ -1,5 +1,5 @@
 - name: Configure firewall
   ansible.builtin.template:
     src: rules.nft.j2
-    dest: /etc/nftables.d/rules.nft
+    dest: /etc/nftables.d/ansible.nft
   notify: Restart nftables service

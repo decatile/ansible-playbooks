@@ -6,6 +6,8 @@ A collection of playbooks for configuring systems of various purposes. Each play
 
 A playbook for configuring Alpine v3.24 as a network gateway. The idea came from a VMWare Workstation limitation whereby only one NAT network is supported. Thanks to this playbook, you can spin up a VM that will support a much larger number of networks.
 
+Example network topology:
+
 WAN - eth0 (192.168.10.3)
 LAN - eth1 (192.168.11.2)
 LAN - eth2 (192.168.12.2)

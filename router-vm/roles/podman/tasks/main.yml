@@ -1,0 +1,5 @@
+- name: Configure podman
+  ansible.builtin.lineinfile:
+    path: /etc/containers/containers.conf
+    regexp: '^#?compose_warning_logs'
+    line: compose_warning_logs = false

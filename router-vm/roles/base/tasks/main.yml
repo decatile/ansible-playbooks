@@ -7,7 +7,7 @@
   ansible.posix.sysctl:
     name: net.ipv4.ip_forward
     value: '1'
-    sysctl_file: /etc/sysctl.d/forward.conf
+    sysctl_file: /etc/sysctl.d/ansible.conf
     state: present
     reload: true
 
@@ -15,7 +15,7 @@
   ansible.posix.sysctl:
     name: net.ipv4.ip_unprivileged_port_start
     value: '53'
-    sysctl_file: /etc/sysctl.d/unpriveleged_port.conf
+    sysctl_file: /etc/sysctl.d/ansible.conf
     state: present
     reload: true
 
@@ -33,7 +33,7 @@
 
 - name: Allow wheel group passwordless sudo
   ansible.builtin.copy:
-    dest: /etc/sudoers.d/wheel
+    dest: /etc/sudoers.d/ansible
     content: "%wheel ALL=(ALL) NOPASSWD: ALL\n"
     mode: '0440'
     validate: '/usr/sbin/visudo -cf %s'
@@ -63,6 +63,7 @@
     path: /etc/subgid
     line: services:100000:65536
     create: true
+
 - name: Make cgroups mode unified explicitly
   ansible.builtin.lineinfile:
     path: /etc/rc.conf
